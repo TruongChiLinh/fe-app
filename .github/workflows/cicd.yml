@@ -57,7 +57,14 @@ jobs:
 
       - name: Update kubeconfig for EKS
         run: |
-          aws eks update-kubeconfig --name EKS_CLUSTER_NAME --region ${{ secrets.REGION }}
+          aws eks update-kubeconfig --name ${{EKS_CLUSTER_NAME}} --region ${{ secrets.REGION }}
 
       - name: Get Kubernetes Nodes
         run: kubectl get nodes
+      # - name: Deploy to EKS
+      #   run: |
+      #     if [ "${{ github.ref }}" == "refs/heads/master" ]; then
+      #       kubectl apply -f k8s/deployment.yml --namespace=prod
+      #     elif [ "${{ github.ref }}" == "refs/heads/staging" ]; then
+      #       kubectl apply -f k8s/deployment.yml --namespace=stag
+      #     fi
