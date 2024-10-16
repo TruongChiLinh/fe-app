@@ -1,12 +1,22 @@
+# Stage 1: Build React app
+FROM node:16-alpine as build
 
-FROM node:16 as build
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+
+COPY package.json ./
+COPY yarn.lock ./
+
+RUN yarn install
+
 COPY . .
-RUN npm run build
 
-FROM amazon/aws-cli:2.13.7 
+RUN yarn build
 
-COPY --from=build /app/build /build
-ENTRYPOINT ["sh", "-c", "aws s3 sync /build s3://linh-bucket --delete"]
+# Stage 2: Serve files with nginx
+FROM nginx:alpine
+
+COPY --from=build /app/build /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
