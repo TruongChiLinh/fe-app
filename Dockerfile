@@ -4,13 +4,13 @@ FROM node:16-alpine as build
 WORKDIR /app
 
 COPY package.json ./
-COPY yarn.lock ./
+COPY package-lock.json ./
 
-RUN yarn install
+RUN npm install
 
 COPY . .
 
-RUN yarn build
+RUN npm run build
 
 # Stage 2: Serve files with nginx
 FROM nginx:alpine
